@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Comment Page</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="comment-box">
+        <form action="/comment" method="post">
+            <textarea name="comment" class="comment-input" placeholder="댓글을 입력하세요..."></textarea>
+            <button type="submit">댓글 달기</button>
+        </form>
+        <div id="likeSection">
+            <div class="like-button" id="likeButton">
+                <span class="like-icon">♥</span>
+                <span class="like-count" id="likeCount" th:text="${likeCount}">0</span>
+            </div>
+        </div>
+    </div>
+    <div class="comments">
+        <ul>
+            <li th:each="comment, commentStat : ${comments}">
+                <span th:text="${comment}" th:if="${!commentStat.last}"></span>
+                <span th:if="${commentStat.last}">
+                    <span th:text="${comment}"></span>
+                    <a href="#" class="edit-button">수정</a>
+                    <a href="#" class="delete-button">삭제</a>
+                </span>
+            </li>
+        </ul>
+    </div>
+    <script th:src="@{/js/scripts.js}"></script>
+    <script>
+        document.getElementById('likeButton').addEventListener('click', function() {
+            var likeCountSpan = document.getElementById('likeCount');
+            var likeCount = parseInt(likeCountSpan.textContent);
+            likeCount++;
+            likeCountSpan.textContent = likeCount;
+
+            // AJAX 요청 보내기
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/like', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({ likeCount: likeCount }));
+        });
+    </script>
+</body>
+</html>
